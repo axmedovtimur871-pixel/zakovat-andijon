@@ -13,7 +13,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // This app lives in a sub-folder of a larger repository – pin the root.
   outputFileTracingRoot: path.join(__dirname),
   images: {
     remotePatterns: supabaseHost

@@ -48,7 +48,6 @@ Copy `.env.example` to `.env.local` and fill in:
 Requirements: Node.js 20–24, Docker (for the local Supabase stack).
 
 ```bash
-cd zakovat
 npm install
 npx supabase start          # local Postgres + Auth + Storage; applies supabase/migrations
 ```
@@ -66,8 +65,7 @@ address (e.g. `http://192.168.1.20:3000`) and run `npm run dev -- -H 0.0.0.0`.
 ## 4. Production setup (Supabase Cloud + Vercel)
 
 ### 4.1 Supabase
-1. Create a **new** project at supabase.com (do not reuse the MINDOVA project — it already has
-   `certificates` tables with a different schema).
+1. Create a **new, empty** project at supabase.com (the production project is `zakovat-andijon`).
 2. Apply the schema — either
    - **CLI:** `npx supabase link --project-ref <ref>` then `npx supabase db push`, or
    - **Dashboard:** SQL Editor → run the files in `supabase/migrations/` in order (`…000001`, `…000002`, `…000003`).
@@ -78,9 +76,9 @@ address (e.g. `http://192.168.1.20:3000`) and run `npm run dev -- -H 0.0.0.0`.
 
 ### 4.2 Netlify (recommended host for this project)
 1. app.netlify.com → **Add new site → Import an existing project** → GitHub → this repository.
-2. **Base directory:** `zakovat` · **Build command:** `npm run build` · **Publish directory:** `zakovat/.next`
-   (these also come from `zakovat/netlify.toml`). Netlify installs its Next.js runtime automatically.
-3. **Branch to deploy:** the branch that holds this code (`main` after merging).
+2. **Base directory:** empty · **Build command:** `npm run build` · **Publish directory:** `.next`
+   (these also come from `netlify.toml`). Netlify installs its Next.js runtime automatically.
+3. **Branch to deploy:** `main`.
 4. **Environment variables** (Site configuration → Environment variables) — all five from section 2.
 5. Deploy, then set `NEXT_PUBLIC_SITE_URL` to the final address (`https://<name>.netlify.app` or your domain) and
    **Trigger deploy → Clear cache and deploy site** so QR codes use it.
@@ -93,8 +91,8 @@ The app is built to fit serverless limits (≈6 MB per response, short request t
 - Fonts and the built-in background are read from disk when available, otherwise from the site's own CDN.
 
 ### 4.3 Vercel or any Node host
-Vercel: import the repo, **Root Directory = `zakovat`**, add the same variables, deploy.
-Render / Railway / VPS: base directory `zakovat`, `npm run build`, start with `npm start` (port 3000) behind HTTPS.
+Vercel: import the repo, add the same variables, deploy.
+Render / Railway / VPS: `npm run build`, start with `npm start` (port 3000) behind HTTPS.
 
 ### 4.4 First administrator
 ```bash
