@@ -2,6 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { AdminRole } from "@/lib/types";
+import { HttpError } from "@/lib/http-error";
 
 export interface CurrentAdmin {
   id: string;
@@ -62,11 +63,7 @@ export async function requireAdminPage(permission?: Permission): Promise<Current
   return admin;
 }
 
-export class HttpError extends Error {
-  constructor(public status: number, message: string) {
-    super(message);
-  }
-}
+export { HttpError };
 
 /** For API routes / server actions: throw a 401/403 when not allowed. */
 export async function requireAdmin(permission?: Permission): Promise<CurrentAdmin> {

@@ -14,7 +14,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ token: 
   const fp = await clientFingerprint();
   if (!rateLimit(`pdf:${fp.ipHash}`, 30, 60_000)) return new Response("Juda koʻp soʻrov", { status: 429 });
 
-  const supabase = createServiceClient();
+  let supabase: ReturnType<typeof createServiceClient>;
+  try {
+    supabase = createServiceClient();
+  } catch (e) {
+    console.error("public pdf: service client misconfigured:", e instanceof Error ? e.message : e);
+    return new Response("PDF yuklab olish vaqtincha ishlamayapti. Birozdan soʻng qayta urinib koʻring.", { status: 503 });
+  }
   const { data } = await supabase.from("certificates").select("*").eq("verification_token", token).maybeSingle();
   const cert = data as CertificateRow | null;
   if (!cert) return new Response("Sertifikat topilmadi", { status: 404 });
