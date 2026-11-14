@@ -49,3 +49,4 @@ export function splitEvents(events: EventRow[]) {
     .sort((a, b) => (b.starts_at ?? "").localeCompare(a.starts_at ?? ""));
   return { upcoming, past };
 }
+

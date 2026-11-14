@@ -15,6 +15,7 @@ export interface EventRow {
   ends_at: string | null;
   cover_image_path: string | null;
   registration_url: string | null;
+  registration_open: boolean;
   status: EventStatus;
   created_at: string;
   updated_at: string;
@@ -101,4 +102,13 @@ export interface VerifyResult {
     background_fit: BackgroundFit;
     layout: unknown;
   } | null;
+}
+
+export interface RegistrationRow {
+  id: string;
+  event_id: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  created_at: string;
 }

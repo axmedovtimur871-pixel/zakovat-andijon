@@ -10,7 +10,7 @@ import { getBrowserClient } from "@/lib/supabase/browser";
 import { cn } from "@/lib/cn";
 import type { AdminRole } from "@/lib/types";
 import {
-  ICalendar, IDashboard, IEye, IGlobe, IList, ILogout, IPlus, ISettings, IStack, ITemplate, IUsers,
+  ICalendar, IClipboard, IDashboard, IEye, IGlobe, IList, ILogout, IPlus, ISettings, IStack, ITemplate, IUsers,
 } from "./admin-icons";
 
 const ROLE_LABELS: Record<AdminRole, string> = {
@@ -26,6 +26,7 @@ const NAV: { href: string; label: string; Icon: (p: { className?: string }) => R
   { href: "/admin/certificates", label: "Barcha sertifikatlar", Icon: IList, exact: true },
   { href: "/admin/templates", label: "Sertifikat shablonlari", Icon: ITemplate, roles: ["super_admin", "admin"] },
   { href: "/admin/events", label: "Tadbirlar", Icon: ICalendar, roles: ["super_admin", "admin"] },
+  { href: "/admin/registrations", label: "Roʻyxatdan oʻtganlar", Icon: IClipboard, roles: ["super_admin", "admin"] },
   { href: "/admin/logs", label: "Tekshiruvlar tarixi", Icon: IEye },
   { href: "/admin/users", label: "Foydalanuvchilar", Icon: IUsers, roles: ["super_admin", "admin"] },
   { href: "/admin/settings", label: "Sozlamalar", Icon: ISettings },

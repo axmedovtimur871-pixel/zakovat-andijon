@@ -10,6 +10,7 @@ import type { EventRow } from "@/lib/types";
 import { dateBadge, formatDateTime, formatNumber } from "@/lib/format";
 import { publicMediaUrl } from "@/lib/env";
 import { cn } from "@/lib/cn";
+import { isRegistrationOpen } from "@/lib/registration";
 import { t } from "@/i18n";
 
 export function SectionHeading({ eyebrow, title, intro, align = "left", tone = "dark" }: {
@@ -173,6 +174,11 @@ export function EventCard({ event }: { event: EventRow }) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-5">
+        {isRegistrationOpen(event) && (
+          <span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-success-100 px-2.5 py-0.5 text-xs font-semibold text-success-700">
+            <span className="size-1.5 rounded-full bg-current" /> {t.events.openBadge}
+          </span>
+        )}
         <h3 className="font-display text-xl leading-snug font-semibold text-navy-900">{event.title}</h3>
         {event.summary && <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{event.summary}</p>}
         <div className="mt-auto space-y-1.5 pt-5 text-[13px] text-muted">

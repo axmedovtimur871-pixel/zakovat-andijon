@@ -27,6 +27,7 @@ const ACTIONS: Record<string, string> = {
   "certificate_templates.delete": "Shablonni oʻchirdi",
   "site_content.insert": "Sayt matnini saqladi",
   "site_content.update": "Sayt matnini oʻzgartirdi",
+  "registration.deleted": "Roʻyxatdan oʻtgan ishtirokchini oʻchirdi",
 };
 
 function describe(details: Record<string, unknown>) {

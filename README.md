@@ -21,8 +21,9 @@ Visitor:      Home → About / Events → Verify a certificate
 | `/` `/about` `/events` `/events/[slug]` `/certificates` `/contact` | Public site (Uzbek, content editable in admin) |
 | `/verify` | Enter a certificate ID, scan a QR with the camera, or scan a QR from a photo |
 | `/verify/[token]` | Page opened by the QR code — always checks the database |
+| `/events/[slug]` → “Roʻyxatdan oʻtish” | Visitors sign up for an event (first name, last name, phone) |
 | `/admin/login` | Admin sign-in (public sign-up is disabled) |
-| `/admin` | Dashboard · Create certificate · Bulk generator · All certificates · Templates · Events · Verification logs · Users & admins · Settings |
+| `/admin` | Dashboard · Create certificate · Bulk generator · All certificates · Templates · Events · Registrations · Verification logs · Users & admins · Settings |
 | `supabase/migrations/` | Complete database schema, RLS policies, storage buckets, seed template |
 | `scripts/create-admin.mjs` | Creates the first (super) administrator |
 | `src/lib/certificates/` | Layout model, PDF renderer, ID/token generator, issuing service |
@@ -68,7 +69,7 @@ address (e.g. `http://192.168.1.20:3000`) and run `npm run dev -- -H 0.0.0.0`.
 1. Create a **new, empty** project at supabase.com (the production project is `zakovat-andijon`).
 2. Apply the schema — either
    - **CLI:** `npx supabase link --project-ref <ref>` then `npx supabase db push`, or
-   - **Dashboard:** SQL Editor → run the files in `supabase/migrations/` in order (`…000001`, `…000002`, `…000003`).
+   - **Dashboard:** SQL Editor → run the files in `supabase/migrations/` in order (`…000001` … `…000004`).
 3. **Authentication → Providers → Email:** keep Email enabled, turn **“Allow new users to sign up” OFF**
    (admins are created only by a super admin or the script).
 4. **Authentication → URL configuration:** Site URL = your domain.
@@ -108,6 +109,7 @@ Then sign in at `/admin/login`. Further admins are added in **Admin → Foydalan
 | View certificates & verification logs | ✓ | ✓ | ✓ |
 | Revoke / restore certificates | ✓ | ✓ | – |
 | Templates, events, website content | ✓ | ✓ | – |
+| Event registrations (names + phone numbers), CSV export | ✓ | ✓ | – |
 | Activity (audit) history | ✓ | ✓ | – |
 | Create admins, change roles, reset passwords | ✓ | – | – |
 
@@ -126,6 +128,8 @@ The same rules are enforced three times: in the UI, in every API route (`require
 - State-changing admin endpoints reject cross-origin requests; public verification and PDF routes are rate-limited.
 - Audit trail (`activity_logs`) is written by database triggers, so it cannot be skipped by the app.
 - Visitor IPs are stored only as salted SHA-256 hashes.
+- Event sign-ups go through `register_for_event()` (checks the event is published, open and not over; one phone per event).
+  Visitors cannot read the list; it is rate-limited and has a honeypot field against bots.
 
 ## 7. Certificates, templates, PDF
 - Templates are **background image + separate layers** (name, type, event text, description, date, organizer,
@@ -174,4 +178,6 @@ production URL), and the Supabase Cloud deployment itself (no project credential
 4. **Bekor qilish:** “Barcha sertifikatlar” → sertifikat → “Bekor qilish” → sababni yozing.
    Tekshirish sahifasida “BEKOR QILINGAN” chiqadi. Kerak boʻlsa, “Qayta tiklash”.
 5. **Shablon:** “Sertifikat shablonlari” → “Yangi shablon” → boʻsh dizayn rasmini yuklang → matnlarni sudrab joylang → “Saqlash”.
-6. **Sayt matnlari:** “Sozlamalar” → boʻlimni tanlang → tahrirlang → “Saqlash”.
+6. **Roʻyxatdan oʻtganlar:** tadbir sahifasida forma bor. Kim yozilganini “Roʻyxatdan oʻtganlar” boʻlimida koʻrasiz va Excel (CSV) qilib yuklab olasiz.
+   Tadbirni tahrirlashda “Saytda roʻyxatdan oʻtish formasi” belgisini olib tashlasangiz, forma yopiladi.
+7. **Sayt matnlari:** “Sozlamalar” → boʻlimni tanlang → tahrirlang → “Saqlash”.

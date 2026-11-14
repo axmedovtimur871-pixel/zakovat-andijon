@@ -22,6 +22,7 @@ const eventSchema = z.object({
   registration_url: z.string().trim().max(500).refine((v) => !v || /^https?:\/\//i.test(v), "Havola http:// yoki https:// bilan boshlansin").transform((v) => v || null),
   cover_image_path: z.string().regex(/^events\/[\w\-/]+\.(png|jpg|webp)$/).nullable(),
   status: z.enum(["draft", "published", "archived"]),
+  registration_open: z.boolean().default(true),
 });
 
 function revalidatePublic() {
@@ -51,6 +52,21 @@ export async function saveEvent(input: unknown): Promise<ActionResult> {
     return { ok: true, id: row.id };
   } catch (e) {
     return { ok: false, error: e instanceof HttpError ? e.message : "Saqlab boʻlmadi" };
+  }
+}
+
+export async function deleteRegistration(id: string): Promise<ActionResult> {
+  try {
+    await requireAdmin("viewRegistrations");
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return { ok: false, error: "Notoʻgʻri ID" };
+    const supabase = await createClient();
+    const { error, count } = await supabase.from("event_registrations").delete({ count: "exact" }).eq("id", id);
+    if (error) return { ok: false, error: error.message };
+    if (!count) return { ok: false, error: "Yozuv topilmadi yoki ruxsat yoʻq." };
+    revalidatePath("/admin/registrations");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof HttpError ? e.message : "Oʻchirib boʻlmadi" };
   }
 }
 

@@ -42,6 +42,7 @@ export function EventForm({ event }: { event?: EventRow }) {
     registration_url: event?.registration_url ?? "",
     cover_image_path: event?.cover_image_path ?? null,
     status: event?.status ?? "draft",
+    registration_open: event?.registration_open ?? true,
   });
   const set = <K extends keyof typeof v>(k: K, val: (typeof v)[K]) => setV((x) => ({ ...x, [k]: val }));
 
@@ -81,7 +82,14 @@ export function EventForm({ event }: { event?: EventRow }) {
           <Field label="Tugash vaqti (ixtiyoriy)">{(p) => <Input {...p} type="datetime-local" value={v.ends_at} onChange={(e) => set("ends_at", e.target.value)} />}</Field>
         </div>
         <Field label="Manzil">{(p) => <Input {...p} value={v.location} maxLength={200} onChange={(e) => set("location", e.target.value)} placeholder="Masalan: Andijon shahri, …" />}</Field>
-        <Field label="Roʻyxatdan oʻtish havolasi (ixtiyoriy)" hint="Masalan, Telegram yoki Google Forms havolasi.">
+        <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-cream-50 p-4">
+          <input type="checkbox" className="mt-0.5 size-5 accent-navy-900" checked={v.registration_open} onChange={(e) => set("registration_open", e.target.checked)} />
+          <span>
+            <span className="block text-sm font-semibold text-navy-900">Saytda roʻyxatdan oʻtish formasi</span>
+            <span className="text-[13px] leading-5 text-muted">Tadbir sahifasida ism, familiya va telefon raqami soʻraladi. Roʻyxat “Roʻyxatdan oʻtganlar” boʻlimida koʻrinadi. Tadbir tugagach, forma avtomatik yopiladi.</span>
+          </span>
+        </label>
+        <Field label="Tashqi roʻyxatdan oʻtish havolasi (ixtiyoriy)" hint="Masalan, Telegram yoki Google Forms havolasi. Odatda kerak emas.">
           {(p) => <Input {...p} type="url" value={v.registration_url} onChange={(e) => set("registration_url", e.target.value)} placeholder="https://" />}
         </Field>
       </Card>

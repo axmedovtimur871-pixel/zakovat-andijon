@@ -19,3 +19,4 @@ export const IRestore = ({ className }: P) => (<svg viewBox="0 0 24 24" classNam
 export const IEdit = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...s}><path d="M4 20h4L19 9a2.8 2.8 0 00-4-4L4 16v4z" /><path d="M13.5 6.5l4 4" /></svg>);
 export const ITrash = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...s}><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13" /></svg>);
 export const IFile = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...s}><path d="M14 3.5H6.5A1.5 1.5 0 005 5v14a1.5 1.5 0 001.5 1.5h11A1.5 1.5 0 0019 19V8.5L14 3.5z" /><path d="M14 3.5v5h5" /></svg>);
+export const IClipboard = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...s}><rect x="5" y="4.5" width="14" height="16" rx="2" /><path d="M9 4.5V3.5h6v1M9 10h6M9 14h6M9 18h3" /></svg>);

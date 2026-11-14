@@ -23,6 +23,7 @@ export const PERMISSIONS = {
   revokeCertificates: ["super_admin", "admin"],
   manageTemplates: ["super_admin", "admin"],
   manageEvents: ["super_admin", "admin"],
+  viewRegistrations: ["super_admin", "admin"],
   manageContent: ["super_admin", "admin"],
   viewActivity: ["super_admin", "admin"],
   manageAdmins: ["super_admin"],
