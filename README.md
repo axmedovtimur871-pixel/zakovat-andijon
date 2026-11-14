@@ -69,7 +69,7 @@ address (e.g. `http://192.168.1.20:3000`) and run `npm run dev -- -H 0.0.0.0`.
 1. Create a **new, empty** project at supabase.com (the production project is `zakovat-andijon`).
 2. Apply the schema — either
    - **CLI:** `npx supabase link --project-ref <ref>` then `npx supabase db push`, or
-   - **Dashboard:** SQL Editor → run the files in `supabase/migrations/` in order (`…000001` … `…000004`).
+   - **Dashboard:** SQL Editor → run the files in `supabase/migrations/` in order (`…000001` … `…000005`).
 3. **Authentication → Providers → Email:** keep Email enabled, turn **“Allow new users to sign up” OFF**
    (admins are created only by a super admin or the script).
 4. **Authentication → URL configuration:** Site URL = your domain.
@@ -180,4 +180,6 @@ production URL), and the Supabase Cloud deployment itself (no project credential
 5. **Shablon:** “Sertifikat shablonlari” → “Yangi shablon” → boʻsh dizayn rasmini yuklang → matnlarni sudrab joylang → “Saqlash”.
 6. **Roʻyxatdan oʻtganlar:** tadbir sahifasida forma bor. Kim yozilganini “Roʻyxatdan oʻtganlar” boʻlimida koʻrasiz va Excel (CSV) qilib yuklab olasiz.
    Tadbirni tahrirlashda “Saytda roʻyxatdan oʻtish formasi” belgisini olib tashlasangiz, forma yopiladi.
-7. **Sayt matnlari:** “Sozlamalar” → boʻlimni tanlang → tahrirlang → “Saqlash”.
+7. **Tadbir joyi (xarita):** tadbirni tahrirlashda xaritada joyga bir marta bosing (yoki Google/Yandex Maps havolasini qoʻying → “Topish”).
+   Saytda tadbir sahifasida xarita va “Google Maps / Yandex Maps” tugmalari chiqadi.
+8. **Sayt matnlari:** “Sozlamalar” → boʻlimni tanlang → tahrirlang → “Saqlash”.

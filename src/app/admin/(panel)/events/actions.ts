@@ -23,6 +23,8 @@ const eventSchema = z.object({
   cover_image_path: z.string().regex(/^events\/[\w\-/]+\.(png|jpg|webp)$/).nullable(),
   status: z.enum(["draft", "published", "archived"]),
   registration_open: z.boolean().default(true),
+  latitude: z.number().min(-90).max(90).nullable().default(null),
+  longitude: z.number().min(-180).max(180).nullable().default(null),
 });
 
 function revalidatePublic() {
@@ -35,6 +37,7 @@ export async function saveEvent(input: unknown): Promise<ActionResult> {
     const parsed = eventSchema.safeParse(input);
     if (!parsed.success) return { ok: false, error: firstZodError(parsed.error) };
     const { id, ...data } = parsed.data;
+    if ((data.latitude === null) !== (data.longitude === null)) return { ok: false, error: "Xaritadagi belgi notoʻgʻri." };
     if (data.starts_at && data.ends_at && new Date(data.ends_at) < new Date(data.starts_at)) {
       return { ok: false, error: "Tugash vaqti boshlanish vaqtidan oldin boʻlishi mumkin emas." };
     }
@@ -83,5 +86,31 @@ export async function deleteEvent(id: string): Promise<ActionResult> {
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof HttpError ? e.message : "Oʻchirib boʻlmadi" };
+  }
+}
+
+// Short share links from phones (maps.app.goo.gl/…, yandex.uz/maps/-/…) carry no
+// coordinates; follow their redirect on the server and read the full link.
+const SHORT_LINK_HOSTS = /^(maps\.app\.goo\.gl|goo\.gl|yandex\.(uz|ru|com|kz)|ya\.cc)$/i;
+
+export async function resolveMapLink(input: string): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  try {
+    await requireAdmin("manageEvents");
+    let url: URL;
+    try {
+      url = new URL(input.trim());
+    } catch {
+      return { ok: false, error: "Havola notoʻgʻri." };
+    }
+    for (let hop = 0; hop < 4; hop++) {
+      if (url.protocol !== "https:" || !SHORT_LINK_HOSTS.test(url.hostname)) break;
+      const res = await fetch(url, { redirect: "manual", headers: { "user-agent": "Mozilla/5.0" }, cache: "no-store", signal: AbortSignal.timeout(6000) });
+      const next = res.headers.get("location");
+      if (!next) break;
+      url = new URL(next, url);
+    }
+    return { ok: true, url: url.toString() };
+  } catch (e) {
+    return { ok: false, error: e instanceof HttpError ? e.message : "Havolani ochib boʻlmadi." };
   }
 }

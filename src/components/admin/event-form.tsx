@@ -11,6 +11,13 @@ import { useToast } from "@/components/ui/toast";
 import { ImageUploadField } from "./image-upload-field";
 import { saveEvent, deleteEvent } from "@/app/admin/(panel)/events/actions";
 import { slugify } from "@/lib/slug";
+import type { LatLng } from "@/lib/geo";
+import dynamic from "next/dynamic";
+
+const LocationPicker = dynamic(() => import("./location-picker").then((m) => m.LocationPicker), {
+  ssr: false,
+  loading: () => <div className="h-80 animate-pulse rounded-xl bg-cream-100" aria-label="Xarita yuklanmoqda" />,
+});
 import type { EventRow } from "@/lib/types";
 
 // datetime-local works in local time; store as ISO with the Tashkent offset.
@@ -44,6 +51,9 @@ export function EventForm({ event }: { event?: EventRow }) {
     status: event?.status ?? "draft",
     registration_open: event?.registration_open ?? true,
   });
+  const [coords, setCoords] = useState<LatLng | null>(
+    event?.latitude != null && event?.longitude != null ? { lat: event.latitude, lng: event.longitude } : null,
+  );
   const set = <K extends keyof typeof v>(k: K, val: (typeof v)[K]) => setV((x) => ({ ...x, [k]: val }));
 
   function submit(e: React.FormEvent) {
@@ -56,6 +66,8 @@ export function EventForm({ event }: { event?: EventRow }) {
         slug: v.slug || slugify(v.title),
         starts_at: fromLocalInput(v.starts_at),
         ends_at: fromLocalInput(v.ends_at),
+        latitude: coords?.lat ?? null,
+        longitude: coords?.lng ?? null,
       });
       if (!res.ok) return setError(res.error);
       toast(event ? "Tadbir saqlandi" : "Tadbir yaratildi");
@@ -81,7 +93,8 @@ export function EventForm({ event }: { event?: EventRow }) {
           <Field label="Boshlanish vaqti" hint="Toshkent vaqti">{(p) => <Input {...p} type="datetime-local" value={v.starts_at} onChange={(e) => set("starts_at", e.target.value)} />}</Field>
           <Field label="Tugash vaqti (ixtiyoriy)">{(p) => <Input {...p} type="datetime-local" value={v.ends_at} onChange={(e) => set("ends_at", e.target.value)} />}</Field>
         </div>
-        <Field label="Manzil">{(p) => <Input {...p} value={v.location} maxLength={200} onChange={(e) => set("location", e.target.value)} placeholder="Masalan: Andijon shahri, …" />}</Field>
+        <Field label="Manzil" hint="Saytda matn sifatida koʻrsatiladi. Aniq joyni pastdagi xaritada belgilang.">{(p) => <Input {...p} value={v.location} maxLength={200} onChange={(e) => set("location", e.target.value)} placeholder="Masalan: Andijon shahri, Bobur shoh koʻchasi, …" />}</Field>
+        <LocationPicker value={coords} onChange={setCoords} address={v.location} />
         <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-cream-50 p-4">
           <input type="checkbox" className="mt-0.5 size-5 accent-navy-900" checked={v.registration_open} onChange={(e) => set("registration_open", e.target.checked)} />
           <span>

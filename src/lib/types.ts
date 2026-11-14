@@ -16,6 +16,8 @@ export interface EventRow {
   cover_image_path: string | null;
   registration_url: string | null;
   registration_open: boolean;
+  latitude: number | null;
+  longitude: number | null;
   status: EventStatus;
   created_at: string;
   updated_at: string;

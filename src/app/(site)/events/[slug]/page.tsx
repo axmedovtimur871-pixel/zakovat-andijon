@@ -9,6 +9,7 @@ import { formatDateTime } from "@/lib/format";
 import { publicMediaUrl } from "@/lib/env";
 import { EventRegistrationForm } from "@/components/site/event-registration-form";
 import { isRegistrationOpen } from "@/lib/registration";
+import { EventMap } from "@/components/site/event-map";
 import { t } from "@/i18n";
 
 export const revalidate = 60;
@@ -23,6 +24,8 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   if (!event) notFound();
   const cover = publicMediaUrl(event.cover_image_path);
   const open = isRegistrationOpen(event);
+  const point = event.latitude != null && event.longitude != null ? { lat: event.latitude, lng: event.longitude } : null;
+  const hasMap = Boolean(point || event.location);
   return (
     <article>
       <header className="relative overflow-hidden bg-navy-950 text-cream-50">
@@ -39,11 +42,15 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
               <dt className="sr-only">{t.events.date}</dt>
               <dd>{event.starts_at ? formatDateTime(event.starts_at) : t.events.tba}</dd>
             </div>
-            {event.location && (
+            {hasMap && (
               <div className="flex items-center gap-2">
                 <IconPin className="size-5 text-gold-400" />
                 <dt className="sr-only">{t.events.location}</dt>
-                <dd>{event.location}</dd>
+                <dd>
+                  <a href="#xarita" className="underline decoration-gold-400/60 underline-offset-4 hover:text-gold-300">
+                    {event.location || "Xaritada koʻrish"}
+                  </a>
+                </dd>
               </div>
             )}
           </dl>
@@ -65,7 +72,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
         <div className="space-y-4 text-[16px] leading-8 text-ink/85">
           {(event.description || event.summary || "").split(/\n{2,}/).map((p, i) => <p key={i} className="whitespace-pre-line">{p}</p>)}
         </div>
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <aside className="space-y-6 lg:self-start">
           {open ? (
             <section id="royxat" className="scroll-mt-24 rounded-2xl border border-gold-400/60 bg-white p-5 shadow-lift sm:p-6">
               <h2 className="font-display text-2xl font-semibold text-navy-900">{t.events.registerTitle}</h2>
@@ -77,6 +84,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
               <p className="rounded-2xl border border-line bg-cream-100 p-5 text-sm text-muted">{t.events.closed}</p>
             )
           )}
+          <EventMap point={point} address={event.location} title={event.title} />
           {cover && (
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-line">
               <Image src={cover} alt="" fill sizes="(min-width: 1024px) 400px, 100vw" className="object-cover" />
